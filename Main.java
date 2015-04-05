@@ -1,5 +1,7 @@
 package Calc;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -7,32 +9,45 @@ import java.util.Stack;
  */
 
 
-
-
 public class Main {
 
-    Stack<Character> stack = new Stack<Character>();
+    Stack<String> stack = new Stack<String>();
+    Set<Character> set = new HashSet<Character>();
+
 
 
 
     public static void main(String[] args) {
 
 
-        new Main();
+        try {
+            new Main();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public Main() {
+    public Main() throws Exception {
 
-        String input = "(1+2)*(1+2)-5=";
+        set.add('+');
+        set.add('-');
+        set.add('*');
+        set.add('/');
+        set.add('^');
+
+
+
+//        String input = "(1+2)*(3+4)-5=";
+        String input = "2+2*2=";
 //        String input = "(a+b)*(c+d)-e=";
 
         char a[] = input.toCharArray();
-        char outstring[] = new char[80];
+        String outstring ="";
 
 
         int k = 0;
         int point = 0;
-
+        String temp = "";
 
         while (a[k] != '\0' && a[k] != '='){
 
@@ -40,46 +55,60 @@ public class Main {
             if(a[k]==')')
             {
                 // все знаки опеpаций до ближайшей откpывающей скобки
-                while(stack.lastElement() != '(')
-                    outstring[point++]=stack.pop();
+                while(stack.lastElement().charAt(0) != '(')
+                    outstring += stack.pop().charAt(0)+" ";
 
                 stack.pop(); // Удаляем из стека саму откpывающую скобку
             }
 
 
-            /* Если очеpедной символ - буква , то */
-            if (Character.isDigit(a[k]))
-                outstring[point++]=a[k];    /* пеpеписываем её в выходную стpоку */
+//             Если очеpедной символ - цифра
+
+            temp ="";
+            while (Character.isDigit(a[k])){
+                temp += Character.toString(a[k]);
+
+                if (Character.isDigit(a[k+1]))
+                    k++;
+                else
+                    break;
+
+
+            }
+            if (!temp.isEmpty())
+                outstring += temp + " ";
+
 
             if(a[k] >= 'a' && a[k] <= 'z')
-                outstring[point++]=a[k];    /* пеpеписываем её в выходную стpоку */
+                outstring += a[k];    /* пеpеписываем её в выходную стpоку */
 
 
             /* Если очеpедной символ - '(' , то */
             if(a[k]=='(')/* заталкиваем её в стек */
-                stack.push('(');
+                stack.push("(");
 
 
-            if(a[k]=='+'||a[k]=='-'||a[k]=='/'||a[k]=='*')
+//            if(a[k]=='+'||a[k]=='-'||a[k]=='/'||a[k]=='*')
+            if(set.contains(a[k]))
 			/* Если следующий символ - знак опеpации , то: */
             {
                 /* если стек пуст */
                 if(stack.size() == 0)
-                    stack.push(a[k]);/* записываем в него опеpацию */
+                    stack.push(Character.toString(a[k]) + " ");/* записываем в него опеpацию */
 
                 else    /* если не пуст */
 				/* если пpиоpитет поступившей опеpации больше
 				пpиоpитета опеpации на веpшине стека */
-                    if(PRIOR(stack.lastElement())<PRIOR(a[k]))
-                        stack.push(a[k]);/* заталкиваем поступившую опеpацию на стек */
+                    if(PRIOR(stack.lastElement().charAt(0))<PRIOR(a[k]))
+                        stack.push(Character.toString(a[k]));/* заталкиваем поступившую опеpацию на стек */
                     else    /* если пpиоpитет меньше */
                     {
-                        while((stack.size() > 0) && (PRIOR(stack.lastElement()) >= PRIOR(a[k])))
+                        while((stack.size() > 0) && (PRIOR(stack.lastElement().charAt(0)) >= PRIOR(a[k])))
                             /* пеpеписываем в выходную стpоку все опеpации
                             с большим или pавным пpиоpитетом */
-                            outstring[point++]=stack.pop();
+                            outstring += stack.pop().charAt(0) + " ";
                         /* записываем в стек поступившую  опеpацию */
-                        stack.push(a[k]);
+                        stack.push(Character.toString(a[k]));
                     }
             }
 		/* Пеpеход к следующему символу входной стpоки */
@@ -88,64 +117,75 @@ public class Main {
 
         //выводим в строку оставшиеся символы
         while (stack.size()>0)
-            outstring[point++] = stack.pop();
+            outstring += stack.pop().charAt(0)+" ";
 
 
+        System.out.println("Обратная польская запись: ");
         System.out.println(outstring);
         count(outstring);
     }
 
-    private void count(char[] outstring) {
+    private void count(String input) {
 
         stack.clear();
 
-        int temp = 0;
 
 
 
-        for (Character c: outstring){
+        int res = 0;
 
-            if (c.equals(outstring[outstring.length-1])) break;
+        Stack<Integer> stack = new Stack<Integer>();
 
-            if (Character.isDigit(c)){
-                stack.push(c);
+        String all[] = input.split(" ");
+
+        for (String item : all){
+
+            if (Character.isDigit(item.charAt(0))){
+                stack.push(Integer.parseInt(item));
+                continue;
             }
-            else
-            {
-                //достаем 2 числа
-                int x1 = Integer.parseInt(stack.pop().toString());
-                int x2 = Integer.parseInt(stack.pop().toString());
 
-                switch (c){
+//            if (item.charAt(0) == '+' || item.charAt(0) == '-' || item.charAt(0) == '*' || item.charAt(0) == '/' ){
+            if (set.contains(item.charAt(0))){
+                //достаем 2 числа
+
+                int x1 = stack.pop();
+                int x2 = stack.pop();
+
+                switch (item.charAt(0)){
                     case '+':
-                        temp = x1 + x2;
+                        res = x1 + x2;
                         break;
                     case '-':
-                        temp = x2 - x1;
+                        res = x2 - x1;
                         break;
                     case '*':
-                        temp = x1 * x2;
+                        res = x1 * x2;
                         break;
                     case '/':
-                        temp = x2 / x1;
+                        res = x2 / x1;
+                        break;
+
+                    case '^':
+                        res = (int) Math.pow((double)x2, (double)x1);
                         break;
 
                 }
 
-                stack.push(Integer.toString(temp).toCharArray()[0]);
+                stack.push(res);
             }
-
-
-
         }
-        System.out.println(stack);
+
+        System.out.println("Ответ: " + stack.pop());
 
     }
 
-    int PRIOR(char a)
-    {
+    int PRIOR(char a) throws Exception {
         switch(a)
         {
+            case '^':
+                return 4;
+
             case '*':
             case '/':
                 return 3;
@@ -156,7 +196,19 @@ public class Main {
 
             case '(':
                 return 1;
+
         }
-        return -1;
+
+
+        throw new Exception("Неизвестный оператор");
+    }
+
+    public boolean checkString(String string) {
+        try {
+            Integer.parseInt(string);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
