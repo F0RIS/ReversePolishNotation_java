@@ -12,15 +12,12 @@ public class RPNCounter implements Operators {
     private String input;
 
 
-
     public RPNCounter(String input) {
         this.input = input;
 
-        loadOperator();
-
     }
 
-    public int Count(){
+    public int Count() throws Exception {
 
         int res = 0;
 
@@ -36,8 +33,11 @@ public class RPNCounter implements Operators {
             }
 
 //            if (item.charAt(0) == '+' || item.charAt(0) == '-' || item.charAt(0) == '*' || item.charAt(0) == '/' ){
-            if (set.contains(item.charAt(0))){
+            if (operators.contains(Character.toString(item.charAt(0)))){
                 //достаем 2 числа
+
+                if (stack.size()<2)
+                    throw new Exception("Expression have some error, counting stopped");
 
                 int x1 = stack.pop();
                 int x2 = stack.pop();
@@ -70,10 +70,4 @@ public class RPNCounter implements Operators {
         return stack.pop();
     }
 
-    @Override
-    public void loadOperator() {
-        for (char c : operators) {
-            set.add(c);
-        }
-    }
 }

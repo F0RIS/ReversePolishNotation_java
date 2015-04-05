@@ -13,7 +13,7 @@ public class ExpressionParser implements Operators {
     String input;
 
     public  ExpressionParser(String _input) {
-        loadOperator();
+
 
         if (_input.charAt(_input.length()-1) != '=')
             _input += '=';
@@ -44,7 +44,7 @@ public class ExpressionParser implements Operators {
 //        throw new Exception("Неизвестный оператор");
     }
 
-    public String makeReversePolandNotation() throws Exception {
+    public String makeReversePolishNotation() throws Exception {
         char a[] = input.toCharArray();
         String outstring = "";
 
@@ -52,6 +52,12 @@ public class ExpressionParser implements Operators {
         String temp = "";
 
         while (a[k] != '\0' && a[k] != '=') {
+
+
+            /* Если очеpедной символ - '(' , то */
+            if (a[k] == '(')/* заталкиваем её в стек */
+                stack.push("(");
+
 
             // Если очеpедной символ - ')' то выталкиваем из стека в выходную стpоку
             if (a[k] == ')') {
@@ -63,9 +69,7 @@ public class ExpressionParser implements Operators {
             }
 
 
-
-            //Если очеpедной символ - цифра
-
+            //Если очеpедной символ - цифра, читываем все символы цифры
             temp = "";
             while (Character.isDigit(a[k])) {
                 temp += Character.toString(a[k]);
@@ -85,13 +89,8 @@ public class ExpressionParser implements Operators {
                 outstring += a[k];    /* пеpеписываем её в выходную стpоку */
 
 
-            /* Если очеpедной символ - '(' , то */
-            if (a[k] == '(')/* заталкиваем её в стек */
-                stack.push("(");
-
-
 //            if(a[k]=='+'||a[k]=='-'||a[k]=='/'||a[k]=='*')
-            if (set.contains(a[k]))
+            if (operators.contains(Character.toString(a[k])))
 			/* Если следующий символ - знак опеpации , то: */ {
                 /* если стек пуст */
                 if (stack.size() == 0)
@@ -112,8 +111,8 @@ public class ExpressionParser implements Operators {
                     }
             }
 
-            if (!set.contains(a[k]) && (!Character.isDigit(a[k])) && a[k] != ' ')
-                throw new Exception("Неизвестный оператор");
+            if (!operators.contains(Character.toString(a[k])) && (!Character.isDigit(a[k])) && a[k] != ' ' && a[k] != '(' && a[k] != ')')
+                throw new Exception("Founded unknown operator");
 
 
 		    //Пеpеход к следующему символу входной стpоки
@@ -128,10 +127,4 @@ public class ExpressionParser implements Operators {
         return outstring;
     }
 
-    @Override
-    public void loadOperator() {
-        for (char c : operators) {
-            set.add(c);
-        }
-    }
 }

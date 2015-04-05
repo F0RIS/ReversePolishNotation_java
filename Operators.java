@@ -8,10 +8,11 @@ import java.util.Set;
  */
 public interface Operators {
 
-    Set<Character> set = new HashSet<Character>();
-    final static char operators[] = {'+', '-', '*', '/', '^'};
+//    Set<Character> set = new HashSet<Character>();
+//    final static char operators[] = {'+', '-', '*', '/', '^'};
+    final static String operators = "+-*/^";
 
-    void loadOperator();
+//    void loadOperator();
 
 
 
