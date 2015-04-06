@@ -17,30 +17,36 @@ public class RPNCounter implements Operators {
 
     }
 
-    public int Count() throws Exception {
+    public double Count() throws Exception {
 
-        int res = 0;
+        double res = 0.0;
 
-        Stack<Integer> stack = new Stack<Integer>();
+        Stack<Double> stack = new Stack<Double>();
 
         String all[] = input.split(" ");
 
         for (String item : all){
 
             if (Character.isDigit(item.charAt(0))){
-                stack.push(Integer.parseInt(item));
+                stack.push(Double.parseDouble(item));
                 continue;
             }
 
-//            if (item.charAt(0) == '+' || item.charAt(0) == '-' || item.charAt(0) == '*' || item.charAt(0) == '/' ){
+
             if (operators.contains(Character.toString(item.charAt(0)))){
+
                 //достаем 2 числа
-
-                if (stack.size()<2)
+                /*if (stack.size()<1)
                     throw new Exception("Expression have some error, counting stopped");
+*/
+                double x1 = 0,x2 =0;
 
-                int x1 = stack.pop();
-                int x2 = stack.pop();
+                if (item.charAt(0) != 'p') //для Пи ничего доставать не нужно, оно просто заменяется
+                     x1 = stack.pop();
+
+                //первые 5 оператора бинарные, остальные унарные
+                if (operators.indexOf(item.charAt(0))<5)
+                    x2 = stack.pop();// = stack.pop();
 
                 switch (item.charAt(0)){
                     case '+':
@@ -57,8 +63,35 @@ public class RPNCounter implements Operators {
                         break;
 
                     case '^':
-                        res = (int) Math.pow((double)x2, (double)x1);
+                        res =  Math.pow((double)x2, (double)x1);
                         break;
+                    case 's':
+                        res =  Math.sin(x1);
+                        break;
+
+                    case 'c':
+                        res = Math.cos(x1);
+                        break;
+                    case 't':
+                        res = Math.tan(x1);
+                        break;
+
+                    case 'e':
+                        res = Math.exp(x1);
+                        break;
+
+                    case 'p':
+                        res = Math.PI;
+                        break;
+
+                    case 'g':
+                        res = Math.log10(x1);
+                        break;
+
+                    case 'l':
+                        res = Math.log(x1);
+                        break;
+
 
                 }
 

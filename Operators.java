@@ -10,7 +10,7 @@ public interface Operators {
 
 //    Set<Character> set = new HashSet<Character>();
 //    final static char operators[] = {'+', '-', '*', '/', '^'};
-    final static String operators = "+-*/^";
+    final static String operators = "+-*/^sctepgl";
 
 //    void loadOperator();
 
